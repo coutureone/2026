@@ -167,7 +167,7 @@ def _process_events(events, yesterday_start, yesterday_end):
     return activities
 
 
-def get_yesterday_github_activity(github_token=None, username="yihong0618"):
+def get_yesterday_github_activity(github_token=None, username="coutureone"):
     """获取昨天的 GitHub 活动"""
     try:
         # 时间设置
@@ -396,8 +396,7 @@ def make_get_up_message(github_token):
     now = pendulum.now(TIMEZONE)
     # 3 - 7 means early for me
     ###  make it to 9 in 2024.10.15 for maybe I forgot it ###
-    # is_get_up_early = 3 <= now.hour <= 9
-    is_get_up_early = 0 <= now.hour <= 24
+    is_get_up_early = 3 <= now.hour <= 9
     try:
         sentence = get_one_sentence()
         print(f"Second: {sentence}")
@@ -446,7 +445,7 @@ def main(
     is_today = get_today_get_up_status(issue)
     if is_today:
         print("Today I have recorded the wake up time")
-        # return
+        return
 
     (
         sentence,
