@@ -76,8 +76,10 @@ def send_dingtalk_message(webhook, secret, content):
         print(f"DingTalk send failed: {e}")
 
 
+from github import Github, Auth
+
 def login(token):
-    return Github(token)
+    return Github(auth=Auth.Token(token))
 
 
 def get_one_sentence():
@@ -433,7 +435,12 @@ def main(
 ):
     u = login(github_token)
     repo = u.get_repo(repo_name)
-    issue = repo.get_issue(GET_UP_ISSUE_NUMBER)
+    try:
+        issue = repo.get_issue(GET_UP_ISSUE_NUMBER)
+    except Exception:
+        # if issue not exist, create it
+        issue = repo.create_issue(title="GET UP", body="GET UP")
+        
     is_today = get_today_get_up_status(issue)
     if is_today:
         print("Today I have recorded the wake up time")
