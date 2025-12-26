@@ -436,11 +436,20 @@ def main(
     u = login(github_token)
     repo = u.get_repo(repo_name)
     try:
-        issue = repo.get_issue(GET_UP_ISSUE_NUMBER)
+        # find the latest open issue with title "GET UP"
+        issues = repo.get_issues(state="open", creator=u.get_user().login)
+        issue = None
+        for i in issues:
+            if i.title == "GET UP":
+                issue = i
+                break
+        
+        if not issue:
+            # if not found, create it
+            issue = repo.create_issue(title="GET UP", body="GET UP")
     except Exception as e:
         print(f"Error getting issue: {e}")
-        # if issue not exist, create it
-        issue = repo.create_issue(title="GET UP", body="GET UP")
+        return
         
     is_today = get_today_get_up_status(issue)
     if is_today:
