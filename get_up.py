@@ -482,10 +482,13 @@ def main(
                 print(str(e))
 
         if dingtalk_webhook:
+            print(f"Sending DingTalk message... Secret length: {len(dingtalk_secret) if dingtalk_secret else 0}")
             try:
                 send_dingtalk_message(dingtalk_webhook, dingtalk_secret, body)
             except Exception as e:
                 print(f"DingTalk exception: {str(e)}")
+        else:
+            print("No DingTalk webhook configured")
 
         cleaned_body = remove_github_links(body)
         issue.create_comment(cleaned_body)
