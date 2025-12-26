@@ -456,7 +456,7 @@ def main(
             print(f"Error creating issue: {e2}")
             return
         
-    is_today = False # get_today_get_up_status(issue)
+    is_today = get_today_get_up_status(issue)
     if is_today:
         print("Today I have recorded the wake up time")
         return
