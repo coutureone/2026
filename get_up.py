@@ -437,7 +437,7 @@ def main(
     repo = u.get_repo(repo_name)
     try:
         # find the latest open issue with title "GET UP"
-        issues = repo.get_issues(state="open", creator=u.get_user().login)
+        issues = repo.get_issues(state="open")
         issue = None
         for i in issues:
             if i.title == "GET UP":
@@ -449,7 +449,12 @@ def main(
             issue = repo.create_issue(title="GET UP", body="GET UP")
     except Exception as e:
         print(f"Error getting issue: {e}")
-        return
+        # fallback: try to create a new issue if searching failed
+        try:
+            issue = repo.create_issue(title="GET UP", body="GET UP")
+        except Exception as e2:
+            print(f"Error creating issue: {e2}")
+            return
         
     is_today = get_today_get_up_status(issue)
     if is_today:
