@@ -396,7 +396,8 @@ def make_get_up_message(github_token):
     now = pendulum.now(TIMEZONE)
     # 3 - 7 means early for me
     ###  make it to 9 in 2024.10.15 for maybe I forgot it ###
-    is_get_up_early = 3 <= now.hour <= 9
+    # is_get_up_early = 3 <= now.hour <= 9
+    is_get_up_early = 0 <= now.hour <= 24
     try:
         sentence = get_one_sentence()
         print(f"Second: {sentence}")
