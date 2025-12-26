@@ -437,7 +437,8 @@ def main(
     repo = u.get_repo(repo_name)
     try:
         issue = repo.get_issue(GET_UP_ISSUE_NUMBER)
-    except Exception:
+    except Exception as e:
+        print(f"Error getting issue: {e}")
         # if issue not exist, create it
         issue = repo.create_issue(title="GET UP", body="GET UP")
         
