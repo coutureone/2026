@@ -446,7 +446,7 @@ def main(
     is_today = get_today_get_up_status(issue)
     if is_today:
         print("Today I have recorded the wake up time")
-        return
+        # return
 
     (
         sentence,
