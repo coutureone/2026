@@ -377,7 +377,7 @@ def get_history_today(birth_year=BIRTH_YEAR, limit=3):
         # 按年份倒序排列选中的事件
         selected_events.sort(key=lambda x: x.get("year", 0), reverse=True)
 
-        result_lines = ["历史上的今天：\n"]
+        result_lines = []
 
         for event in selected_events:
             year = event.get("year")
@@ -399,12 +399,13 @@ def get_history_today(birth_year=BIRTH_YEAR, limit=3):
             text = convert(text, "zh-cn")  # 繁体转简体
 
             # 构建带链接的文本
+            # 行尾加两个空格兼容钉钉Markdown换行
             if wiki_url:
-                result_lines.append(f"• {year}年：[{text}]({wiki_url}) {age_text}")
+                result_lines.append(f"• **{year}年**：[{text}]({wiki_url}) {age_text}  ")
             else:
-                result_lines.append(f"• {year}年：{text} {age_text}")
+                result_lines.append(f"• **{year}年**：{text} {age_text}  ")
 
-        return "\n".join(result_lines)
+        return "历史上的今天：\n\n" + "\n".join(result_lines)
 
     except Exception as e:
         print(f"Error getting history today: {e}")
