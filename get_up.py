@@ -583,8 +583,8 @@ def get_yesterday_github_activity(github_token=None, username="coutureone"):
             # 去重并限制数量
             unique_activities = list(dict.fromkeys(activities))
             print(f"去重后活动数: {len(unique_activities)}")
-            result = "GitHub：\n\n" + "\n".join(
-                f"• {activity}" for activity in unique_activities[:15]
+            result = "GitHub：  \n\n" + "  \n".join(
+                f"• {activity}  " for activity in unique_activities[:15]
             )
             print(f"最终结果:\n{result}")
             return result
@@ -648,21 +648,21 @@ def get_running_distance():
             running_info_parts = []
 
             if yesterday_result and yesterday_result[0] > 0:
-                running_info_parts.append(f"• 昨天跑了 {yesterday_result[1]} 公里")
+                running_info_parts.append(f"• 昨天跑了 {yesterday_result[1]} 公里  ")
             else:
-                running_info_parts.append("• 昨天没跑")
+                running_info_parts.append("• 昨天没跑  ")
 
             if month_result and month_result[0] > 0:
-                running_info_parts.append(f"• 本月跑了 {month_result[1]} 公里")
+                running_info_parts.append(f"• 本月跑了 {month_result[1]} 公里  ")
             else:
-                running_info_parts.append("• 本月没跑")
+                running_info_parts.append("• 本月没跑  ")
 
             if year_result and year_result[0] > 0:
-                running_info_parts.append(f"• 今年跑了 {year_result[1]} 公里")
+                running_info_parts.append(f"• 今年跑了 {year_result[1]} 公里  ")
             else:
-                running_info_parts.append("• 今年没跑")
+                running_info_parts.append("• 今年没跑  ")
 
-            return "Run：\n\n" + "\n".join(running_info_parts)
+            return "Run：  \n\n" + "  \n".join(running_info_parts)
 
     except Exception as e:
         print(f"Error getting running data: {e}")
