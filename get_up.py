@@ -18,7 +18,9 @@ from telegramify_markdown import markdownify
 
 # 1 real get up #5 for test
 GET_UP_ISSUE_NUMBER = 1
-GET_UP_MESSAGE_TEMPLATE = """今天的起床时间是--{get_up_time}。
+GET_UP_MESSAGE_TEMPLATE = """{weather_info}
+
+今天的起床时间是--{get_up_time}。
 
 起床啦。
 
@@ -38,6 +40,9 @@ GET_UP_MESSAGE_TEMPLATE = """今天的起床时间是--{get_up_time}。
 
 {sentence}
 """
+
+# 天气 API（使用 wttr.in 免费服务）
+WEATHER_API = "https://wttr.in/Hangzhou?format=j1&lang=zh"
 
 # 使用 v2 API 获取完整诗词
 SENTENCE_API = "https://v2.jinrishici.com/one.json"
@@ -116,6 +121,58 @@ def send_dingtalk_message(webhook, secret, content):
 
 def login(token):
     return Github(auth=Auth.Token(token))
+
+
+def get_hangzhou_weather():
+    """获取杭州天气预报
+    
+    使用 wttr.in 免费 API 获取杭州的天气信息
+    返回格式化的天气信息字符串
+    """
+    try:
+        r = requests.get(WEATHER_API, timeout=10)
+        if r.ok:
+            data = r.json()
+            
+            # 获取当前天气
+            current = data.get("current_condition", [{}])[0]
+            temp = current.get("temp_C", "")
+            feels_like = current.get("FeelsLikeC", "")
+            humidity = current.get("humidity", "")
+            
+            # 获取中文天气描述
+            weather_desc = "未知"
+            lang_zh = current.get("lang_zh", [])
+            if lang_zh:
+                weather_desc = lang_zh[0].get("value", "未知")
+            
+            # 获取今日天气预报（最高/最低温度）
+            today_weather = data.get("weather", [{}])[0]
+            max_temp = today_weather.get("maxtempC", "")
+            min_temp = today_weather.get("mintempC", "")
+            
+            # 获取日出日落时间
+            astronomy = today_weather.get("astronomy", [{}])[0]
+            sunrise = astronomy.get("sunrise", "")
+            sunset = astronomy.get("sunset", "")
+            
+            # 构建天气信息（行尾加两个空格兼容钉钉Markdown换行）
+            weather_lines = [
+                "🌤️ **杭州天气预报**  ",
+                "",
+                f"• 当前天气：{weather_desc}  ",
+                f"• 当前温度：{temp}°C（体感 {feels_like}°C）  ",
+                f"• 今日温度：{min_temp}°C ~ {max_temp}°C  ",
+                f"• 相对湿度：{humidity}%  ",
+                f"• 日出日落：{sunrise} / {sunset}  ",
+            ]
+            
+            return "\n".join(weather_lines)
+        
+        return "🌤️ **杭州天气预报**：获取失败"
+    except Exception as e:
+        print(f"get weather wrong: {e}")
+        return "🌤️ **杭州天气预报**：获取失败"
 
 
 def get_one_sentence():
@@ -723,6 +780,10 @@ def make_get_up_message(github_token):
     except Exception as e:
         print(str(e))
 
+    # 获取天气预报
+    weather_info = get_hangzhou_weather()
+    print(f"Weather: {weather_info}")
+
     day_of_year = get_day_of_year()
     year_progress = get_year_progress()
     github_activity = get_yesterday_github_activity(github_token)
@@ -733,6 +794,7 @@ def make_get_up_message(github_token):
     return (
         sentence,
         is_get_up_early,
+        weather_info,
         day_of_year,
         year_progress,
         github_activity,
@@ -788,6 +850,7 @@ def main(
     (
         sentence,
         is_get_up_early,
+        weather_info,
         day_of_year,
         year_progress,
         github_activity,
@@ -798,6 +861,7 @@ def main(
     get_up_time = pendulum.now(TIMEZONE).to_datetime_string()
 
     body = GET_UP_MESSAGE_TEMPLATE.format(
+        weather_info=weather_info,
         get_up_time=get_up_time,
         sentence=sentence,
         day_of_year=day_of_year,
